@@ -3,8 +3,9 @@ import Board from "./Board";
 import Modal from "./Modal";
 export default function TicTacToeApp() {
   const [size, setSize] = useState(3);
-  const templateArr = generateTemplateArr(size);
-  const [board, setBoard] = useState(templateArr);
+  const [winBy, setWinBy] = useState(3);
+  // const templateArr = generateTemplateArr(size);
+  const [board, setBoard] = useState(generateTemplateArr(size));
   const [turn, setTurn] = useState(false);
   const [win, setWin] = useState('no');
   function calculateLeftIndexes(col) {
@@ -14,7 +15,7 @@ export default function TicTacToeApp() {
     }
     return leftIndexes;
   }
-  function generateTemplateArr(col) {
+  function generateTemplateArr(col = 3) {
     const arr = [];
     for (let i = 0; i < col ** 2; i++) {
       arr.push({
@@ -29,7 +30,7 @@ export default function TicTacToeApp() {
     }
     return arr;
   }
-  console.log(templateArr);
+  // console.log(templateArr);
   let winner = useRef();
   useEffect(() => {
     winner.current = turn;
@@ -37,7 +38,7 @@ export default function TicTacToeApp() {
   function closeModal() {
     setWin(false);
     setTurn(false);
-    setBoard(templateArr);
+    setBoard(generateTemplateArr(size));
   }
   function handleDocClick(e) {
     e.stopPropagation();
@@ -55,12 +56,14 @@ export default function TicTacToeApp() {
       document.removeEventListener("click", handleDocClick);
     };
   }, [win]);
+  console.log(win);
+  
   return (
     <div className="flex flex-col items-center relative">
       {/* <Modal win={win} winner={winner} /> */}
       <h2
-        className={`font-semibold text-2xl mb-5 transition-opacity ${
-          win ? "opacity-0" : "opacity-100"
+        className={`font-semibold mb-5 transition-all ${
+          win === 'yes' ? "text-[0]" : "text-2xl"
         }`}
       >
         Player "{turn ? "O" : "X"}" To Move
@@ -73,8 +76,14 @@ export default function TicTacToeApp() {
         setTurn={setTurn}
         win={win}
         setWin={setWin}
+        winBy={winBy}
+        setWinBy={setWinBy}
       />
-      <input type="number" onChange={(e)=>{setSize(e.target.value);setBoard(generateTemplateArr(e.target.value))}} value={size}/>
+      <button className="border border-black rounded-lg" onClick={()=>{setBoard(generateTemplateArr(size)); setWin('no');}}>reset</button>
+      <label htmlFor="size">size :</label>
+      <input className="border" type="number" id="size" onChange={(e)=>{setSize(e.target.value);setBoard(generateTemplateArr(e.target.value))}} value={size}/>
+      <label htmlFor="winRate">win by :</label>
+      <input className="border" type="number" id="winRate" onChange={(e)=>{setWinBy(e.target.value)}} value={winBy}/>
     </div>
   );
 }
