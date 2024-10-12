@@ -5,7 +5,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      transitionTimingFunction: {
+        'myTransitionFunc': 'cubic-bezier(0.4, 0, 0.12, 0.97)'
+      }
+    },
   },
   plugins: [],
 }

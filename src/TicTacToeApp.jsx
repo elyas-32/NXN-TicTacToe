@@ -1,43 +1,66 @@
 import { useEffect, useRef, useState } from "react";
 import Board from "./Board";
-import Modal from "./Modal";
+const players = [
+  { color: "red", val: "X"},
+  { color: "blue", val: "O"},
+  { color: "green", val: "T"},
+  { color: "yellow", val: "Z"},
+];
+
 export default function TicTacToeApp() {
+  const [playerNum, setPlayerNum] = useState(2);
+  const [currentPlayers, setCurrentPlayers] = useState(calculateCurrentPlayers(playerNum));
   const [size, setSize] = useState(3);
   const [winBy, setWinBy] = useState(3);
-  // const templateArr = generateTemplateArr(size);
   const [board, setBoard] = useState(generateTemplateArr(size));
-  const [turn, setTurn] = useState(false);
-  const [win, setWin] = useState('no');
+  const [player, setPlayer] = useState(currentPlayers[currentPlayers.length-1].val);
+  const [win, setWin] = useState("no");
+  console.log('current players :',currentPlayers);
+  
+  function calculateCurrentPlayers(playersNumber){
+    let current = [];
+    for(let i = 0; i<playersNumber; i++){
+      current.push(players[i])
+    }
+    return current;
+
+  }
   function calculateLeftIndexes(col) {
     let leftIndexes = [];
     for (let i = 0; i < col; i++) {
-      leftIndexes.push(col * i)
+      leftIndexes.push(col * i);
     }
     return leftIndexes;
   }
-  function generateTemplateArr(col = 3) {
+  function generateTemplateArr(sizeValue = 3) {
     const arr = [];
-    for (let i = 0; i < col ** 2; i++) {
+    for (let i = 0; i < sizeValue ** 2; i++) {
       arr.push({
         val: null,
         id: i + 1,
         borderStatus:
-        i === 0 ? '!border-t-0 !border-l-0':
-        i < col ? "!border-t-0" :
-        calculateLeftIndexes(col).some(indx=>indx === i)  ? '!border-l-0' :
-        'border-2'
+          i === 0
+            ? "!border-t-0 !border-l-0"
+            : i < sizeValue
+            ? "!border-t-0"
+            : calculateLeftIndexes(sizeValue).some((indx) => indx === i)
+            ? "!border-l-0"
+            : "border-2",
       });
     }
     return arr;
   }
-  // console.log(templateArr);
+  // for (let player in players) {
+  //   console.log(player);
+
+  // }
   let winner = useRef();
   useEffect(() => {
-    winner.current = turn;
-  }, [turn]);
+    winner.current = player;
+  }, [player]);
   function closeModal() {
     setWin(false);
-    setTurn(false);
+    setPlayer(false);
     setBoard(generateTemplateArr(size));
   }
   function handleDocClick(e) {
@@ -49,41 +72,93 @@ export default function TicTacToeApp() {
     }
   }
   useEffect(() => {
-    if (win === 'yes' || win === 'draw') {
+    if (win === "yes" || win === "draw") {
       document.addEventListener("click", handleDocClick);
     }
     return () => {
       document.removeEventListener("click", handleDocClick);
     };
   }, [win]);
-  console.log(win);
-  
+  let currentPlayer = currentPlayers.findIndex(p=>{
+    return p.val=== player;
+  });
+  let y;
+  if(currentPlayers.length - 1 < currentPlayer + 1) {
+    console.log('assigning zero');
+    y = 0;
+  } else {
+    y = currentPlayer+1;
+  }
+  console.log(currentPlayer);
+  console.log("win ? :", win);
   return (
-    <div className="flex flex-col items-center relative">
-      {/* <Modal win={win} winner={winner} /> */}
+    <div className="flex flex-col items-center relative text-white">
       <h2
         className={`font-semibold mb-5 transition-all ${
-          win === 'yes' ? "text-[0]" : "text-2xl"
+          win === "no" && winBy <= size ? "text-2xl" : "text-[0]" 
         }`}
       >
-        Player "{turn ? "O" : "X"}" To Move
+        Player "{currentPlayers[y].val}" To Move
       </h2>
       <Board
         board={board}
         size={size}
         setBoard={setBoard}
-        turn={turn}
-        setTurn={setTurn}
+        player={player}
+        setPlayer={setPlayer}
         win={win}
         setWin={setWin}
         winBy={winBy}
         setWinBy={setWinBy}
+        players={players}
+        currentPlayers={currentPlayers}
+        setCurrentPlayers={setCurrentPlayers}
       />
-      <button className="border border-black rounded-lg" onClick={()=>{setBoard(generateTemplateArr(size)); setWin('no');}}>reset</button>
+      <button
+        className="border px-1 hover:bg-slate-900 font-bold mt-8 border-white rounded-lg"
+        onClick={() => {
+          setBoard(generateTemplateArr(size));
+          setWin("no");
+        }}
+      >
+        reset
+      </button>
       <label htmlFor="size">size :</label>
-      <input className="border" type="number" id="size" onChange={(e)=>{setSize(e.target.value);setBoard(generateTemplateArr(e.target.value))}} value={size}/>
+      <input
+        className="border text-black"
+        type="number"
+        id="size"
+        onChange={(e) => {
+          setSize(e.target.value);
+          setBoard(generateTemplateArr(e.target.value));
+        }}
+        value={size}
+      />
       <label htmlFor="winRate">win by :</label>
-      <input className="border" type="number" id="winRate" onChange={(e)=>{setWinBy(e.target.value)}} value={winBy}/>
+      <input
+        className="border text-black"
+        type="number"
+        id="winRate"
+        onChange={(e)=>{
+          setWinBy(e.target.value);
+          handleWinByChange();
+        }}
+        value={winBy}
+      />
+        <label htmlFor="playerCount">players :</label>
+      <input
+        className="border text-black"
+        type="number"
+        id="playerCount"
+        onChange={(e) => {
+          setPlayerNum(e.target.value);
+          setCurrentPlayers(calculateCurrentPlayers(e.target.value));
+          setPlayer(calculateCurrentPlayers(e.target.value)[calculateCurrentPlayers(e.target.value).length-1].val);
+          setBoard(generateTemplateArr(size));
+        }}
+        max={4}
+        value={playerNum}
+      />
     </div>
   );
 }
