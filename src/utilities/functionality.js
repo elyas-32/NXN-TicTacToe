@@ -1,5 +1,10 @@
-export function checkGameStatus(arr, winByVal = 3, boardSize = 3, winSetter) {
-    checkWinner();
+export function checkGameStatus(
+  arr,
+  winByVal = 3,
+  boardSize = 3,
+  winSetter
+) {
+   return checkWinner();
     function checkWinner() {
       for (let combo of calculateCombos(winByVal)) {
         let winning = true;
@@ -16,7 +21,7 @@ export function checkGameStatus(arr, winByVal = 3, boardSize = 3, winSetter) {
         }
         if (winning) {
           winSetter("yes");
-          return;
+          return combo;
         }
       }
       checkDraw();
@@ -73,7 +78,11 @@ export function checkGameStatus(arr, winByVal = 3, boardSize = 3, winSetter) {
     function calculateColCombos(winByVal) {
       let winCombos = [];
       for (let col = 0; col < boardSize; col++) {
-        for (let startIndex = 0; startIndex <= boardSize - winByVal; startIndex++) {
+        for (
+          let startIndex = 0;
+          startIndex <= boardSize - winByVal;
+          startIndex++
+        ) {
           let combo = [];
           for (let step = 0; step < winByVal; step++) {
             combo.push(startIndex * boardSize + step * boardSize + col);
@@ -86,7 +95,11 @@ export function checkGameStatus(arr, winByVal = 3, boardSize = 3, winSetter) {
     function calculateRowCombos(winByVal) {
       let winCombos = [];
       for (let row = 0; row < boardSize; row++) {
-        for (let startIndex = 0; startIndex <= boardSize - winByVal; startIndex++) {
+        for (
+          let startIndex = 0;
+          startIndex <= boardSize - winByVal;
+          startIndex++
+        ) {
           let combo = [];
           for (let step = 0; step < winByVal; step++) {
             combo.push(boardSize * row + startIndex + step);
@@ -101,4 +114,11 @@ export function checkGameStatus(arr, winByVal = 3, boardSize = 3, winSetter) {
       draw && winSetter("draw");
     }
   }
-  
+// }
+
+export const players = [
+  { color: "text-red-800", val: "X" },
+  { color: "text-blue-800", val: "O" },
+  { color: "text-green-800", val: "T" },
+  { color: "text-yellow-800", val: "Z" },
+];

@@ -4,7 +4,7 @@ import TicTacToeApp from "./TicTacToeApp";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
     <TicTacToeApp />
-  </StrictMode>
+  // {/* </StrictMode> */}
 );
