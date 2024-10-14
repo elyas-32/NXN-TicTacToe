@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily:{
+        'Baloo' : 'Baloo'
+      },
       transitionTimingFunction: {
         'myTransitionFunc': 'cubic-bezier(0.4, 0, 0.12, 0.97)'
       }

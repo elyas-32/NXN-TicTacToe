@@ -1,18 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { checkGameStatus, players } from "./utilities/functionality";
 import Board from "./Board";
+import NumInput from "./NumInput";
 export default function TicTacToeApp() {
-  const [playerCount, setPlayerCount] = useState(2);
+  const [inputs, setInputs] = useState({ size: 3, winBy: 3, playerCount: 2 });
   const [currentPlayers, setCurrentPlayers] = useState(
-    calculateCurrentPlayers(playerCount)
+    calculateCurrentPlayers(inputs.playerCount)
   );
-  const [size, setSize] = useState(3);
-  const [winBy, setWinBy] = useState(3);
-  const [board, setBoard] = useState(generateTemplateArr(size));
   const [player, setPlayer] = useState(
     currentPlayers[currentPlayers.length - 1]
   );
   const [win, setWin] = useState("no");
+  const [board, setBoard] = useState(generateTemplateArr(inputs.size));
   function calculateCurrentPlayers(playersNumber = 2) {
     let current = [];
     for (let i = 0; i < playersNumber; i++) {
@@ -40,7 +39,9 @@ export default function TicTacToeApp() {
             ? "!border-t-0"
             : calculateLeftIndexes(sizeValue).some((indx) => indx === i)
             ? "!border-l-0"
-            : "border-2",
+            : sizeValue < 15
+            ? "border-2"
+            : "border",
         color: "text-white",
         bgColor: "",
       });
@@ -50,27 +51,27 @@ export default function TicTacToeApp() {
 
   let winner = useRef();
   useEffect(() => {
-    winner.current = player;
+    winner.current = player.val;
   }, [player]);
-  function closeModal() {
-    setWin("no");
-    setPlayer(currentPlayers[currentPlayers.length - 1]);
-    setBoard(generateTemplateArr(size));
-  }
-  function handleDocClick(e) {
-    e.stopPropagation();
-    if (e.target.name !== "modal") {
-      closeModal();
-    }
-  }
-  useEffect(() => {
-    if (win === "yes" || win === "draw") {
-      document.addEventListener("click", handleDocClick);
-    }
-    return () => {
-      document.removeEventListener("click", handleDocClick);
-    };
-  }, [win]);
+  // function closeModal() {
+  //   setWin("no");
+  //   setPlayer(currentPlayers[currentPlayers.length - 1]);
+  //   setBoard(generateTemplateArr(inputs.size));
+  // }
+  // function handleDocClick(e) {
+  //   e.stopPropagation();
+  //   if (e.target.name !== "modal") {
+  //     closeModal();
+  //   }
+  // }
+  // useEffect(() => {
+  //   if (win === "yes" || win === "draw") {
+  //     document.addEventListener("click", handleDocClick);
+  //   }
+  //   return () => {
+  //     document.removeEventListener("click", handleDocClick);
+  //   };
+  // }, [win]);
   let currentPlayer = currentPlayers.findIndex((p) => {
     return p.val === player.val;
   });
@@ -80,82 +81,118 @@ export default function TicTacToeApp() {
   } else {
     y = currentPlayer + 1;
   }
-  console.log('running app compo');
-  
+  // console.log("running app compo");
+  // console.log("inputs", inputs);
+  console.log("board", board);
+  // let playerCountInput = inputs.playerCount;
+  function updateGameByPlayerCount(inputValue) {
+    setInputs({ ...inputs, playerCount: inputValue });
+    setCurrentPlayers(calculateCurrentPlayers(inputValue));
+    setPlayer(
+      calculateCurrentPlayers(inputValue)[
+        calculateCurrentPlayers(inputValue).length - 1
+      ].val
+    );
+    setBoard(generateTemplateArr(inputs.size));
+  }
+  function minusNumInputHandler(target) {
+    if (target === "playerCount") {
+      let inputVal = inputs.playerCount === 1 ? 1 : inputs.playerCount - 1;
+      updateGameByPlayerCount(inputVal);
+    } else if (target === "winBy") {
+      inputs.winBy === 1
+        ? setInputs({ ...inputs, winBy: 1 })
+        : setInputs({ ...inputs, winBy: inputs.winBy - 1 });
+    } else {
+      let inputVal = inputs.size === 1 ? 1 : inputs.size - 1;
+      console.log("cell number should be ;", inputVal);
+
+      setBoard(generateTemplateArr(inputVal));
+      setInputs({ ...inputs, size: inputVal });
+    }
+  }
+  function changeNumInputHandler(e, actionTarget) {
+    if (actionTarget === "playerCount") {
+    } else if (actionTarget === "winBy") {
+      setInputs({ ...inputs, winBy: e.target.value });
+    } else {
+      setBoard(generateTemplateArr(e.target.value));
+      setInputs({ ...inputs, size: +e.target.value });
+    }
+  }
+  function plusNumInputHandler(target) {
+    if (target === "playerCount") {
+      let inputVal = inputs.playerCount === 4 ? 4 : inputs.playerCount + 1;
+      updateGameByPlayerCount(inputVal);
+    } else if (target === "winBy") {
+      setInputs({ ...inputs, winBy: inputs.winBy + 1 });
+    } else {
+      setBoard(generateTemplateArr(inputs.size + 1));
+      setInputs({ ...inputs, size: inputs.size + 1 });
+    }
+  }
+
   return (
-    <div className="flex flex-col items-center relative text-white">
-      <h2
-        className={`font-semibold mb-5 transition-all ${
-          win === "no" && winBy <= size ? "text-2xl" : "text-[0]"
-        }`}
-      >
-        Player "{currentPlayers[y].val}" To Move
+    <div className="flex flex-col items-center text-white max-h-[100vh] h-[100vh] justify-between">
+      <h2 className={`font-semibold mb-5 transition-all my-7 text-4xl`}>
+        {win === "no"
+          ? `Player "${currentPlayers[y].val}" To Move`
+          : win === "draw"
+          ? "draw"
+          : `player "${player.val}" won`}
       </h2>
       <Board
         board={board}
-        size={size}
+        size={inputs.size}
         setBoard={setBoard}
         player={player}
         setPlayer={setPlayer}
         win={win}
         setWin={setWin}
-        winBy={winBy}
-        setWinBy={setWinBy}
+        winBy={inputs.winBy}
         players={players}
         currentPlayers={currentPlayers}
         setCurrentPlayers={setCurrentPlayers}
       />
       <button
-        className="border px-1 hover:bg-slate-900 font-bold mt-8 border-white rounded-lg"
+        className="border p-2 px-4 hover:bg-slate-900 border-white rounded-lg my-7"
         onClick={() => {
-          setBoard(generateTemplateArr(size));
+          setBoard(generateTemplateArr(inputs.size));
           setWin("no");
-          setPlayer(currentPlayers[currentPlayers.length - 1])
+          setPlayer(currentPlayers[currentPlayers.length - 1]);
         }}
       >
-        reset
+        RESET
       </button>
-      <label htmlFor="size">size :</label>
-      <input
-        className="border text-black"
-        type="number"
-        id="size"
-        onChange={(e) => {
-          setSize(e.target.value);
-          setBoard(generateTemplateArr(e.target.value));
-        }}
-        value={size}
-      />
-      <label htmlFor="winRate">win by :</label>
-      <input
-        className="border text-black"
-        type="number"
-        id="winRate"
-        onChange={(e) => {
-          setWinBy(e.target.value);
-        }}
-        value={winBy}
-      />
-      <label htmlFor="playerCount">players :</label>
-      <input
-        className="border text-black"
-        type="number"
-        id="playerCount"
-        onChange={(e) => {
-          let inputVal = e.target.value;
-          setPlayerCount(inputVal);
-          console.log(inputVal);
-          setCurrentPlayers(calculateCurrentPlayers(inputVal));
-          setPlayer(
-            calculateCurrentPlayers(inputVal)[
-              calculateCurrentPlayers(inputVal).length - 1
-            ].val
-          );
-          setBoard(generateTemplateArr(size));
-        }}
-        max={4}
-        value={playerCount}
-      />
+      <div className="flex-col flex justify-between w-full gap-2 mb-3 min-[500px]:flex-row items-center">
+        <NumInput
+          changeNumInputHandler={changeNumInputHandler}
+          input={inputs.size}
+          minusNumInputHandler={minusNumInputHandler}
+          plusNumInputHandler={plusNumInputHandler}
+          readOnly={true}
+          title={"Size"}
+          target={"size"}
+        />
+        <NumInput
+          changeNumInputHandler={changeNumInputHandler}
+          plusNumInputHandler={plusNumInputHandler}
+          minusNumInputHandler={minusNumInputHandler}
+          readOnly={true}
+          title={`Win By ${inputs.winBy} In a Row`}
+          input={inputs.winBy}
+          target={"winBy"}
+        />
+        <NumInput
+          readOnly={true}
+          target={"playerCount"}
+          input={inputs.playerCount}
+          title={"Player Count"}
+          plusNumInputHandler={plusNumInputHandler}
+          minusNumInputHandler={minusNumInputHandler}
+          changeNumInputHandler={changeNumInputHandler}
+        />
+      </div>
     </div>
   );
 }

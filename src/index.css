@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+#input::-webkit-outer-spin-button,
+#input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#input[type="number"] {
+  -moz-appearance: textfield;
+}
+@font-face {
+  font-family: "Baloo";
+  src: url("./utilities/BalooPaaji2-VariableFont_wght.ttf");
+}
+.win-shadow {
+  -webkit-box-shadow: 0px 0px 74px 10px #1E293B;
+  -moz-box-shadow: 0px 0px 74px 10px #1E293B;
+  box-shadow: 0px 0px 74px 10px #1E293B;
+}
