@@ -45,7 +45,7 @@ export default function Cell({
         for (let i = 0; i < board.length; i++) {
           for (let com of combo) {
             if (i === com) {
-              nextboard[i].bgColor = "bg-slate-800 win-shadow";
+              nextboard[i].bgColor = "bg-slate-600 win-shadow";
             }
           }
         }
@@ -55,23 +55,21 @@ export default function Cell({
   }
   return (
     <div
-      className={`flex justify-center items-center font-bold grow-0 shrink-0 leading-[0] transition-[background] duration-700 hover:bg-[#0d0d22] cursor-pointer rounded-sm ${cell.bgColor} ${cell.borderStatus}`}
+      className={`flex justify-center items-center overflow-hidden font-bold grow-0 shrink-0 transition-[background] duration-700 hover:bg-[#0d0d22] cursor-pointer ${cell.bgColor} ${cell.borderStatus}`}
       onClick={(e) => {
         handleCellClick(cellIndex, e);
       }}
     >
       <span
-        className={`transition-all duration-200  leading-[0] ${cell.color} ${
+        className={`transition-all duration-200 !leading-[0] inline-block ${cell.color} ${
           cellFilled ? "scale-100" : "scale-0"
         } ${
-          size < 7
-            ? "text-6xl"
-            : size < 10
-            ? "text-5xl"
-            : size < 20
-            ? "text-2xl"
-            : ""
-          // size <
+          size < 7 ? 'text-5xl' : 
+          size < 11 ? 'text-3xl' :
+          size < 15 ? 'text-xl' :
+          size < 20 ? 'text-sm' : 
+          size < 27 ? 'text-xs' : 'text-[5px]'
+
         }`}
       >
         {cell.val}

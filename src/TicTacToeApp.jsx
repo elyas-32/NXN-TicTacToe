@@ -53,25 +53,6 @@ export default function TicTacToeApp() {
   useEffect(() => {
     winner.current = player.val;
   }, [player]);
-  // function closeModal() {
-  //   setWin("no");
-  //   setPlayer(currentPlayers[currentPlayers.length - 1]);
-  //   setBoard(generateTemplateArr(inputs.size));
-  // }
-  // function handleDocClick(e) {
-  //   e.stopPropagation();
-  //   if (e.target.name !== "modal") {
-  //     closeModal();
-  //   }
-  // }
-  // useEffect(() => {
-  //   if (win === "yes" || win === "draw") {
-  //     document.addEventListener("click", handleDocClick);
-  //   }
-  //   return () => {
-  //     document.removeEventListener("click", handleDocClick);
-  //   };
-  // }, [win]);
   let currentPlayer = currentPlayers.findIndex((p) => {
     return p.val === player.val;
   });
@@ -81,11 +62,8 @@ export default function TicTacToeApp() {
   } else {
     y = currentPlayer + 1;
   }
-  // console.log("running app compo");
-  // console.log("inputs", inputs);
-  console.log("board", board);
-  // let playerCountInput = inputs.playerCount;
   function updateGameByPlayerCount(inputValue) {
+    setWin('no');
     setInputs({ ...inputs, playerCount: inputValue });
     setCurrentPlayers(calculateCurrentPlayers(inputValue));
     setPlayer(
@@ -105,10 +83,12 @@ export default function TicTacToeApp() {
         : setInputs({ ...inputs, winBy: inputs.winBy - 1 });
     } else {
       let inputVal = inputs.size === 1 ? 1 : inputs.size - 1;
-      console.log("cell number should be ;", inputVal);
 
       setBoard(generateTemplateArr(inputVal));
+      setWin('no')
       setInputs({ ...inputs, size: inputVal });
+      setPlayer(currentPlayers[currentPlayers.length - 1]);
+
     }
   }
   function changeNumInputHandler(e, actionTarget) {
@@ -128,12 +108,15 @@ export default function TicTacToeApp() {
       setInputs({ ...inputs, winBy: inputs.winBy + 1 });
     } else {
       setBoard(generateTemplateArr(inputs.size + 1));
+      setWin('no')
       setInputs({ ...inputs, size: inputs.size + 1 });
+      setPlayer(currentPlayers[currentPlayers.length - 1]);
+
     }
   }
-
+  
   return (
-    <div className="flex flex-col items-center text-white max-h-[100vh] h-[100vh] justify-between">
+    <div className="flex flex-col items-center text-white max-h-[100vh] h-[100vh] overflow-hidden">
       <h2 className={`font-semibold mb-5 transition-all my-7 text-4xl`}>
         {win === "no"
           ? `Player "${currentPlayers[y].val}" To Move`
@@ -164,7 +147,7 @@ export default function TicTacToeApp() {
       >
         RESET
       </button>
-      <div className="flex-col flex justify-between w-full gap-2 mb-3 min-[500px]:flex-row items-center">
+      <div className="flex-col flex w-full min-[500px]:flex-row gap-5 mb-5 min-[500px]:justify-evenly items-center">
         <NumInput
           changeNumInputHandler={changeNumInputHandler}
           input={inputs.size}

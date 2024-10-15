@@ -1,10 +1,7 @@
 import { useState } from "react";
 export default function NumInput({readOnly, input, plusNumInputHandler, minusNumInputHandler, changeNumInputHandler, target, title}) {  
-    // const [count, setCount] = useState(2);
-    // let target =  ? 
-
   return (
-    <div className="flex flex-col text-center">
+    <div className="flex flex-col text-center gap-1">
     <label htmlFor="">{title} :</label>
     <div className="flex gap-1">
       <div className="p-2 transition-[background] duration-200 cursor-pointer hover:bg-[#0d0d22] hover:border-2 text-white rounded-lg size-8 flex justify-center items-center border border-white"
