@@ -1,4 +1,3 @@
-import { useRef, useState } from "react";
 import { checkGameStatus } from "./utilities/functionality";
 export default function Cell({
   setBoard,
@@ -20,20 +19,18 @@ export default function Cell({
 }) {
   let cellFilled = board[cellIndex].val;
   function findNextPlayerIndex() {
-    let x = currentPlayers.findIndex((p) => {
+    let currentPlayerIndex = currentPlayers.findIndex((p) => {
       return p.val === player.val;
     });
-    let y;
-    if (currentPlayers.length - 1 < x + 1) {
-      y = 0;
+    let nextPlayerIndex;
+    if (currentPlayers.length - 1 < currentPlayerIndex + 1) {
+      nextPlayerIndex = 0;
     } else {
-      y = x + 1;
+      nextPlayerIndex = currentPlayerIndex + 1;
     }
-    return y;
+    return nextPlayerIndex;
   }
-  // const [isWinIndex, setIsWinIndex] = useState(false);
   function handleCellClick(ci, ev) {
-    ev.stopPropagation();
     if (cellFilled === null && win === "no") {
       let nextPlayer = currentPlayers[findNextPlayerIndex()];
       let nextboard = board.map((boardItem) => ({ ...boardItem }));
@@ -61,15 +58,20 @@ export default function Cell({
       }}
     >
       <span
-        className={`transition-all duration-200 !leading-[0] inline-block ${cell.color} ${
-          cellFilled ? "scale-100" : "scale-0"
-        } ${
-          size < 7 ? 'text-5xl' : 
-          size < 11 ? 'text-3xl' :
-          size < 15 ? 'text-xl' :
-          size < 20 ? 'text-sm' : 
-          size < 27 ? 'text-xs' : 'text-[5px]'
-
+        className={`transition-all duration-200 !leading-[0] inline-block ${
+          cell.color
+        } ${cellFilled ? "scale-100" : "scale-0"} ${
+          size < 7
+            ? "text-5xl"
+            : size < 11
+            ? "text-3xl"
+            : size < 15
+            ? "text-xl"
+            : size < 20
+            ? "text-sm"
+            : size < 27
+            ? "text-xs"
+            : "text-[5px]"
         }`}
       >
         {cell.val}

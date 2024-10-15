@@ -1,5 +1,5 @@
-import { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { checkGameStatus, players } from "./utilities/functionality";
+import { useState } from "react";
+import { players } from "./utilities/functionality";
 import Board from "./Board";
 import NumInput from "./NumInput";
 export default function TicTacToeApp() {
@@ -13,11 +13,11 @@ export default function TicTacToeApp() {
   const [win, setWin] = useState("no");
   const [board, setBoard] = useState(generateTemplateArr(inputs.size));
   function calculateCurrentPlayers(playersNumber = 2) {
-    let current = [];
+    let currentPlayers = [];
     for (let i = 0; i < playersNumber; i++) {
-      current.push(players[i]);
+      currentPlayers.push(players[i]);
     }
-    return current;
+    return currentPlayers;
   }
   function calculateLeftIndexes(col) {
     let leftIndexes = [];
@@ -48,22 +48,20 @@ export default function TicTacToeApp() {
     }
     return arr;
   }
-
-  let winner = useRef();
-  useEffect(() => {
-    winner.current = player.val;
-  }, [player]);
-  let currentPlayer = currentPlayers.findIndex((p) => {
-    return p.val === player.val;
-  });
-  let y;
-  if (currentPlayers.length - 1 < currentPlayer + 1) {
-    y = 0;
-  } else {
-    y = currentPlayer + 1;
+  function calculateMoveTurn() {
+    let currentPlayerIndex = currentPlayers.findIndex((p) => {
+      return p.val === player.val;
+    });
+    let y;
+    if (currentPlayers.length - 1 < currentPlayerIndex + 1) {
+      y = 0;
+    } else {
+      y = currentPlayerIndex + 1;
+    }
+    return y;
   }
   function updateGameByPlayerCount(inputValue) {
-    setWin('no');
+    setWin("no");
     setInputs({ ...inputs, playerCount: inputValue });
     setCurrentPlayers(calculateCurrentPlayers(inputValue));
     setPlayer(
@@ -75,51 +73,44 @@ export default function TicTacToeApp() {
   }
   function minusNumInputHandler(target) {
     if (target === "playerCount") {
-      let inputVal = inputs.playerCount === 1 ? 1 : inputs.playerCount - 1;
-      updateGameByPlayerCount(inputVal);
+      if (inputs.playerCount !== 1) {
+        // let inputVal = inputs.playerCount === 1 ? 1 : inputs.playerCount - 1;
+        updateGameByPlayerCount(inputs.playerCount - 1);
+      }
     } else if (target === "winBy") {
-      inputs.winBy === 1
-        ? setInputs({ ...inputs, winBy: 1 })
-        : setInputs({ ...inputs, winBy: inputs.winBy - 1 });
+      if (inputs.winBy !== 1) {
+        setInputs({ ...inputs, winBy: inputs.winBy - 1 });
+      }
     } else {
-      let inputVal = inputs.size === 1 ? 1 : inputs.size - 1;
-
-      setBoard(generateTemplateArr(inputVal));
-      setWin('no')
-      setInputs({ ...inputs, size: inputVal });
-      setPlayer(currentPlayers[currentPlayers.length - 1]);
-
-    }
-  }
-  function changeNumInputHandler(e, actionTarget) {
-    if (actionTarget === "playerCount") {
-    } else if (actionTarget === "winBy") {
-      setInputs({ ...inputs, winBy: e.target.value });
-    } else {
-      setBoard(generateTemplateArr(e.target.value));
-      setInputs({ ...inputs, size: +e.target.value });
+      if (inputs.size !== 1) {
+        let inputVal = inputs.size - 1;
+        setBoard(generateTemplateArr(inputVal));
+        setWin("no");
+        setInputs({ ...inputs, size: inputVal });
+        setPlayer(currentPlayers[currentPlayers.length - 1]);
+      }
     }
   }
   function plusNumInputHandler(target) {
     if (target === "playerCount") {
-      let inputVal = inputs.playerCount === 4 ? 4 : inputs.playerCount + 1;
-      updateGameByPlayerCount(inputVal);
+      if (inputs.playerCount !== 4) {
+        // let inputVal = inputs.playerCount === 4 ? 4 : inputs.playerCount + 1;
+        updateGameByPlayerCount(inputs.playerCount + 1);
+      }
     } else if (target === "winBy") {
       setInputs({ ...inputs, winBy: inputs.winBy + 1 });
     } else {
       setBoard(generateTemplateArr(inputs.size + 1));
-      setWin('no')
+      setWin("no");
       setInputs({ ...inputs, size: inputs.size + 1 });
       setPlayer(currentPlayers[currentPlayers.length - 1]);
-
     }
   }
-  
   return (
     <div className="flex flex-col items-center text-white max-h-[100vh] h-[100vh] overflow-hidden">
       <h2 className={`font-semibold mb-5 transition-all my-7 text-4xl`}>
         {win === "no"
-          ? `Player "${currentPlayers[y].val}" To Move`
+          ? `Player "${currentPlayers[calculateMoveTurn()].val}" To Move`
           : win === "draw"
           ? "draw"
           : `player "${player.val}" won`}
@@ -149,7 +140,6 @@ export default function TicTacToeApp() {
       </button>
       <div className="flex-col flex w-full min-[500px]:flex-row gap-5 mb-5 min-[500px]:justify-evenly items-center">
         <NumInput
-          changeNumInputHandler={changeNumInputHandler}
           input={inputs.size}
           minusNumInputHandler={minusNumInputHandler}
           plusNumInputHandler={plusNumInputHandler}
@@ -158,7 +148,6 @@ export default function TicTacToeApp() {
           target={"size"}
         />
         <NumInput
-          changeNumInputHandler={changeNumInputHandler}
           plusNumInputHandler={plusNumInputHandler}
           minusNumInputHandler={minusNumInputHandler}
           readOnly={true}
@@ -173,7 +162,6 @@ export default function TicTacToeApp() {
           title={"Player Count"}
           plusNumInputHandler={plusNumInputHandler}
           minusNumInputHandler={minusNumInputHandler}
-          changeNumInputHandler={changeNumInputHandler}
         />
       </div>
     </div>
