@@ -1,8 +1,10 @@
+import { SetStateAction } from "react";
+import { BoardCell } from "../Board";
 export function checkGameStatus(
-  arr,
+  arr :BoardCell[],
   winByVal = 3,
   boardSize = 3,
-  winSetter
+  winSetter : React.Dispatch<SetStateAction<string>>
 ) {
    return checkWinner();
     function checkWinner() {
@@ -26,7 +28,7 @@ export function checkGameStatus(
       }
       checkDraw();
     }
-    function calculateCombos(winByVal) {
+    function calculateCombos(winByVal:number) {
       let combos = [
         ...calculateRowCombos(winByVal),
         ...calculateColCombos(winByVal),
@@ -35,7 +37,7 @@ export function checkGameStatus(
       ];
       return combos;
     }
-    function calculateStartIndexesLTR(winByVal) {
+    function calculateStartIndexesLTR(winByVal:number) {
       let startIndexes = [];
       for (let i = 0; i < boardSize - (winByVal - 1); i++) {
         for (let j = 0; j < boardSize - (winByVal - 1); j++) {
@@ -44,7 +46,7 @@ export function checkGameStatus(
       }
       return startIndexes;
     }
-    function calculateStartIndexesRTL(winByVal) {
+    function calculateStartIndexesRTL(winByVal:number) {
       let startIndexes = [];
       for (let i = boardSize - 1; i >= winByVal - 1; i--) {
         for (let j = 0; j < boardSize - (winByVal - 1); j++) {
@@ -53,7 +55,7 @@ export function checkGameStatus(
       }
       return startIndexes;
     }
-    function calculateDiagonalCombosRTL(winByVal) {
+    function calculateDiagonalCombosRTL(winByVal:number) {
       let winCombos = [];
       for (let startIndex of calculateStartIndexesRTL(winByVal)) {
         let winArr = [];
@@ -64,7 +66,7 @@ export function checkGameStatus(
       }
       return winCombos;
     }
-    function calculateDiagonalCombosLTR(winByVal) {
+    function calculateDiagonalCombosLTR(winByVal:number) {
       let winCombos = [];
       for (let startIndex of calculateStartIndexesLTR(winByVal)) {
         let winArr = [];
@@ -75,7 +77,7 @@ export function checkGameStatus(
       }
       return winCombos;
     }
-    function calculateColCombos(winByVal) {
+    function calculateColCombos(winByVal:number) {
       let winCombos = [];
       for (let col = 0; col < boardSize; col++) {
         for (
@@ -92,7 +94,7 @@ export function checkGameStatus(
       }
       return winCombos;
     }
-    function calculateRowCombos(winByVal) {
+    function calculateRowCombos(winByVal:number) {
       let winCombos = [];
       for (let row = 0; row < boardSize; row++) {
         for (

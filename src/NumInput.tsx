@@ -1,3 +1,11 @@
+interface NumInputProps {
+  readOnly: boolean;
+  input: number;
+  plusNumInputHandler: (target: string) => void;
+  minusNumInputHandler: (target: string) => void;
+  target: string;
+  title: string;
+}
 export default function NumInput({
   readOnly,
   input,
@@ -5,7 +13,7 @@ export default function NumInput({
   minusNumInputHandler,
   target,
   title,
-}) {
+}: NumInputProps) {
   return (
     <div className="flex flex-col text-center gap-1">
       <label htmlFor="">{title} :</label>

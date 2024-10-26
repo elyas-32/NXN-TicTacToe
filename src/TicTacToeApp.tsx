@@ -19,7 +19,7 @@ export default function TicTacToeApp() {
     }
     return currentPlayers;
   }
-  function calculateLeftIndexes(col) {
+  function calculateLeftIndexes(col: number) {
     let leftIndexes = [];
     for (let i = 0; i < col; i++) {
       leftIndexes.push(col * i);
@@ -60,50 +60,57 @@ export default function TicTacToeApp() {
     }
     return y;
   }
-  function updateGameByPlayerCount(inputValue) {
+  function updateGameByPlayerCount(inputValue: number) {
     setWin("no");
     setInputs({ ...inputs, playerCount: inputValue });
     setCurrentPlayers(calculateCurrentPlayers(inputValue));
     setPlayer(
       calculateCurrentPlayers(inputValue)[
         calculateCurrentPlayers(inputValue).length - 1
-      ].val
+      ]
     );
     setBoard(generateTemplateArr(inputs.size));
   }
-  function minusNumInputHandler(target) {
-    if (target === "playerCount") {
-      if (inputs.playerCount !== 1) {
-        // let inputVal = inputs.playerCount === 1 ? 1 : inputs.playerCount - 1;
-        updateGameByPlayerCount(inputs.playerCount - 1);
-      }
-    } else if (target === "winBy") {
-      if (inputs.winBy !== 1) {
-        setInputs({ ...inputs, winBy: inputs.winBy - 1 });
-      }
-    } else {
-      if (inputs.size !== 1) {
-        let inputVal = inputs.size - 1;
-        setBoard(generateTemplateArr(inputVal));
-        setWin("no");
-        setInputs({ ...inputs, size: inputVal });
-        setPlayer(currentPlayers[currentPlayers.length - 1]);
-      }
+  function minusNumInputHandler(target: string) {
+    switch (target) {
+      case "playerCount":
+        if (inputs.playerCount !== 1) {
+          updateGameByPlayerCount(inputs.playerCount - 1);
+        }
+        break;
+      case "winBy":
+        console.log("winby");
+        if (inputs.winBy !== 1) {
+          setInputs({ ...inputs, winBy: inputs.winBy - 1 });
+        }
+        break;
+      case "size":
+        if (inputs.size !== 1) {
+          let inputVal = inputs.size - 1;
+          setBoard(generateTemplateArr(inputVal));
+          setWin("no");
+          setInputs({ ...inputs, size: inputVal });
+          setPlayer(currentPlayers[currentPlayers.length - 1]);
+        }
+        break;
     }
   }
-  function plusNumInputHandler(target) {
-    if (target === "playerCount") {
-      if (inputs.playerCount !== 4) {
-        // let inputVal = inputs.playerCount === 4 ? 4 : inputs.playerCount + 1;
-        updateGameByPlayerCount(inputs.playerCount + 1);
-      }
-    } else if (target === "winBy") {
-      setInputs({ ...inputs, winBy: inputs.winBy + 1 });
-    } else {
-      setBoard(generateTemplateArr(inputs.size + 1));
-      setWin("no");
-      setInputs({ ...inputs, size: inputs.size + 1 });
-      setPlayer(currentPlayers[currentPlayers.length - 1]);
+  function plusNumInputHandler(target: string) {
+    switch (target) {
+      case "playerCount":
+        if (inputs.playerCount !== 4) {
+          updateGameByPlayerCount(inputs.playerCount + 1);
+        }
+        break;
+      case "winBy":
+        setInputs({ ...inputs, winBy: inputs.winBy + 1 });
+        break;
+      case "size":
+        setBoard(generateTemplateArr(inputs.size + 1));
+        setWin("no");
+        setInputs({ ...inputs, size: inputs.size + 1 });
+        setPlayer(currentPlayers[currentPlayers.length - 1]);
+        break;
     }
   }
   return (
