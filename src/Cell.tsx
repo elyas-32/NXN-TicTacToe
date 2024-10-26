@@ -1,4 +1,23 @@
+import { BoardCell } from "./Board";
+import React, { SetStateAction } from "react";
 import { checkGameStatus } from "./utilities/functionality";
+interface player {
+  color: string;
+  val: string;
+}
+interface cellProps {
+  setBoard: React.Dispatch<SetStateAction<BoardCell[]>>;
+  cellIndex: number;
+  board: BoardCell[];
+  size: number;
+  player: player;
+  setPlayer: React.Dispatch<SetStateAction<player>>;
+  win: string;
+  setWin: React.Dispatch<SetStateAction<string>>;
+  cell : BoardCell;
+  winBy : number;
+  currentPlayers: player[];
+}
 export default function Cell({
   setBoard,
   cellIndex,
@@ -8,15 +27,11 @@ export default function Cell({
   setPlayer,
   win,
   setWin,
-  setDraw,
   cell,
   winBy,
-  setWinBy,
-  players,
   currentPlayers,
-  setCurrentPlayers,
   ...props
-}) {
+}:cellProps) {
   let cellFilled = board[cellIndex].val;
   function findNextPlayerIndex() {
     let currentPlayerIndex = currentPlayers.findIndex((p) => {
@@ -30,7 +45,7 @@ export default function Cell({
     }
     return nextPlayerIndex;
   }
-  function handleCellClick(ci, ev) {
+  function handleCellClick(ci:number, ev:React.MouseEvent<HTMLElement>) {
     if (cellFilled === null && win === "no") {
       let nextPlayer = currentPlayers[findNextPlayerIndex()];
       let nextboard = board.map((boardItem) => ({ ...boardItem }));
